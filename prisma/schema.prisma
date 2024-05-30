@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+model computadora2 {
+  ID                  Int          @id @default(autoincrement())
+  estado              String       @default("Activo")
+  descripcion         String
+  detallesTecnicos    String
+  costoPorHoraPrestamo Float
+  prestamos           prestamo2[]
+  sucursal            Sucursal     @relation(fields: [idsucursal], references: [idsucursal])
+  idsucursal          Int
+}
+
+model prestamista2 {
+  ID                Int          @id @default(autoincrement())
+  estado            String       @default("Activo")
+  nombre            String
+  identificacion    String       @unique
+  prestamos         prestamo2[]
+  sucursal          Sucursal     @relation(fields: [idsucursal], references: [idsucursal])
+  idsucursal        Int
+}
+
+model prestamo2 {
+  ID                Int          @id @default(autoincrement())
+  estado            String       @default("Activo")
+  computadora       computadora2 @relation(fields: [IDcomputadora], references: [ID])
+  IDcomputadora     Int
+  prestamista       prestamista2 @relation(fields: [IDprestamista], references: [ID])
+  IDprestamista     Int
+  fecha             DateTime
+  hora              String
+  numeroHorasPrestamo Int
+  sucursal          Sucursal     @relation(fields: [idsucursal], references: [idsucursal])
+  idsucursal        Int
+}
+
+model Sucursal {
+  idsucursal        Int          @id @default(autoincrement())
+  lugar             String
+  computadoras      computadora2[]
+  prestamistas      prestamista2[]
+  prestamos         prestamo2[]
+}
